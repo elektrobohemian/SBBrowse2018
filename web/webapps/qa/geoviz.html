@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>SBBrowse beta</title>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.4.11/d3.min.js"></script>
+    <script src="//d3js.org/d3.v4.min.js"></script>
+
+    <script src="../common/SBBrowse_config.js"></script>
+
+    <link type="text/css" rel="stylesheet" href="../css/sbbbrowse.css" />
+
+    <meta charset="utf-8">
+
+    <link rel="stylesheet" href="https://openlayers.org/en/v3.20.1/css/ol.css" type="text/css">
+    <!-- The line below is only needed for old environments like Internet Explorer and Android 4.x -->
+    <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL"></script>
+    <script src="https://openlayers.org/en/v3.20.1/build/ol.js"></script>
+
+    <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+
+    <style>
+        .ol-dragbox {
+            background-color: rgba(255, 255, 255, 0.4);
+            border-color: rgba(100, 150, 0, 1);
+        }
+        
+        #map {
+            height: 512px;
+            width: 1024px;
+        }
+
+    </style>
+</head>
+
+<body>
+    <h1>Geo-spatial Distribution of Records &beta;</h1>
+    <p>&nbsp;</p>
+    <br />
+    <br />
+
+
+    <div id="map" class="map"></div>
+    <p>Use Ctrl+Drag (Command+Drag on Mac) to draw boxes</p>
+    <div id="info" class="infotext">No selection</div>
+    <div id="detailinfo" class="infotext">No details, yet...</div>
+    <script>
+        function getPPNDetails(ppn) {
+            var flickerAPI = dataPathPrefix+"ppn/" + ppn + ".json";
+            $.getJSON(flickerAPI)
+                .done(function(data) {
+                    /*$.each(data.items, function(i, item) {
+                        $("<img>").attr("src", item.media.m).appendTo("#images");
+                        if (i === 3) {
+                            return false;
+                        }
+                    });*/
+                    //console.log(data);
+                    var detailBox = document.getElementById('detailinfo');
+                    detailBox.innerHTML = data.source + " (" + ppn + ")";
+                });
+        }
+
+        var vectorSource = new ol.source.Vector({
+            url: 'https://openlayers.org/en/v3.20.1/examples/data/geojson/countries.geojson',
+            format: new ol.format.GeoJSON()
+        });
+
+        // david
+        var vectorSource2 = new ol.source.Vector({
+            url: dataPathPrefix+'/layers/global.json',
+            format: new ol.format.GeoJSON()
+        });
+        // david
+
+        var map = new ol.Map({
+            layers: [
+                new ol.layer.Tile({
+                    source: new ol.source.OSM()
+                }),
+                /*new ol.layer.Vector({
+                    source: vectorSource
+                }),*/
+                new ol.layer.Vector({
+                    source: vectorSource2
+                })
+            ],
+            target: 'map',
+            view: new ol.View({
+                center: [0, 0],
+                zoom: 2
+            })
+        });
+
+        var infoBox = document.getElementById('info');
+
+        // a normal select interaction to handle click
+        var select = new ol.interaction.Select({
+            condition: ol.events.condition.click,
+            multi: true
+        });
+        map.addInteraction(select);
+        select.on('select', function(e) {
+            selection = e.selected;
+            for (var i in selection) {
+                console.log(selection[i].get('title'));
+                getPPNDetails(selection[i].get('ppn'));
+            }
+        });
+
+        var selectedFeatures = select.getFeatures();
+
+        // a DragBox interaction used to select features by drawing boxes
+        var dragBox = new ol.interaction.DragBox({
+            condition: ol.events.condition.platformModifierKeyOnly
+        });
+
+        map.addInteraction(dragBox);
+
+
+
+        dragBox.on('boxend', function() {
+            // features that intersect the box are added to the collection of
+            // selected features, and their names are displayed in the "info"
+            // div
+            var info = [];
+            var extent = dragBox.getGeometry().getExtent();
+            vectorSource2.forEachFeatureIntersectingExtent(extent, function(feature) {
+                selectedFeatures.push(feature);
+                info.push(feature.get('title'));
+            });
+            if (info.length > 0) {
+                infoBox.innerHTML = info.join(', ');
+            }
+        });
+
+        // clear selection when drawing a new box and when clicking on the map
+        dragBox.on('boxstart', function() {
+            selectedFeatures.clear();
+            infoBox.innerHTML = '&nbsp;';
+        });
+        map.on('click', function() {
+            selectedFeatures.clear();
+            infoBox.innerHTML = '&nbsp;';
+        });
+
+    </script>
+</body>
+
+</html>

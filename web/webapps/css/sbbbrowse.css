@@ -1,0 +1,295 @@
+/* 
+ * The MIT License
+ *
+ * Copyright 2018 David Zellhoefer.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+ 
+/*body{
+	background-color: #000000;
+}*/
+
+h1 {
+    font-family: 'Helvetica Neue', 'Helvetica Light', sans-serif;
+    font-weight: lighter;
+    position: fixed;
+    margin-left: 10px;
+    margin-top: 10px;
+}
+h2 {
+    font-family: 'Helvetica Neue', 'Helvetica Light', sans-serif;
+    font-weight: lighter;
+}
+p {
+    font-family: 'Helvetica Neue', 'Helvetica Light', sans-serif;
+    font-weight: lighter;
+    font-size: 11px;
+}
+.infotext {
+    font-family: 'Helvetica Neue', 'Helvetica Light', sans-serif;
+    font-weight: lighter;
+    font-size: 11px;
+}
+button {
+    background-color: #FFFFFF;
+    /* Green */
+    border: none;
+    color: #999;
+    /*padding: 15px 32px;*/
+    text-align: center;
+    text-decoration: none;
+    font-family: 'Helvetica Neue', 'Helvetica Light', sans-serif;
+    font-weight: lighter;
+    font-size: 16px;
+}
+a {
+    font-family: 'Helvetica Neue', 'Helvetica Light', sans-serif;
+    font-weight: lighter;
+}
+table,
+th,
+td {
+    font-family: 'Helvetica Neue', 'Helvetica Light', sans-serif;
+    font-weight: lighter;
+    font-size: 10px;
+    border-collapse: collapse;
+    border: 1px solid black;
+}
+button:hover {
+    color: #000000;
+}
+.on {
+    /*border: 1px outset;*/
+    color: #000;
+    background-color: #FFFFFF;
+    text-align: center;
+    text-decoration: none;
+    font-family: 'Helvetica Neue', 'Helvetica Light', sans-serif;
+    font-weight: lighter;
+    font-size: 16px;
+    border: none;
+    text-decoration: underline;
+}
+.off {
+    /*border: 1px outset;*/
+    color: #999;
+    background-color: #FFFFFF;
+    text-align: center;
+    text-decoration: none;
+    font-family: 'Helvetica Neue', 'Helvetica Light', sans-serif;
+    font-weight: lighter;
+    font-size: 16px;
+    border: none;
+}
+
+/*
+jQuery UI 
+*/
+
+.transparent-dialog {
+    background-color: rgba(255, 255, 255, 0.9);
+}
+.transparent-dialog .ui-widget-content {
+    background: transparent;
+}
+
+/*
+SVG
+*/
+
+#chart {
+    padding-top: 50px;
+    overflow: auto;
+}
+circle.node {
+    stroke: #fff;
+    stroke-width: 1.5px;
+}
+circle.nodeInvisible {
+    stroke: #fff;
+    stroke-width: 1.5px;
+    visibility: hidden;
+}
+line.link {
+    stroke: #999;
+    stroke-opacity: .6;
+}
+
+/*
+ Node comparison IDs
+
+kuler color fitting to #1660A7
+#15334F
+#B4322A
+#6A7404
+#DFF314
+*/
+
+line.edgeLink {
+    stroke: #1660A7; // node color determined by OS X color picker
+    stroke-opacity: .6;
+    stroke-dasharray: 5, 2, 5, 2;
+}
+line.edgeLink_title {
+    stroke: #000000;
+    stroke-opacity: .6;
+    stroke-width: 4;
+    stroke-linecap: round;
+}
+line.edgeLink_dateClean {
+    stroke: #78B114;
+    stroke-opacity: .6;
+    stroke-width: 4;
+    stroke-linecap: round;
+}
+line.edgeLink_source {
+    stroke: #bee;
+    stroke-opacity: .6;
+    stroke-dasharray: 34, 34;
+    stroke-width: 4;
+    stroke-linecap: round;
+}
+line.edgeLink_creator {
+    stroke: #15334F;
+    stroke-opacity: .6;
+    /*stroke-dasharray: 28, 28;*/
+    stroke-width: 4;
+    stroke-linecap: round;
+}
+line.edgeLink_creatorCluster {
+    stroke: #15334F;
+    stroke-opacity: .6;
+    stroke-dasharray: 28, 28;
+    stroke-width: 4;
+    stroke-linecap: round;
+}
+line.edgeLink_publisher {
+    stroke: #DFF314;
+    stroke-opacity: .6;
+    stroke-dasharray: 22, 22;
+    stroke-width: 4;
+    stroke-linecap: round;
+}
+line.edgeLink_location {
+    stroke: #B4322A;
+    stroke-opacity: .6;
+    stroke-dasharray: 16, 16;
+    stroke-width: 4;
+    stroke-linecap: round;
+}
+line.edgeLink_mediatype {
+    stroke: #1660A7;
+    stroke-opacity: .6;
+    stroke-dasharray: 10, 10;
+    stroke-width: 4;
+    stroke-linecap: round;
+}
+line.edgeLink_subject {
+    stroke: #6A7404;
+    stroke-opacity: .6;
+    stroke-dasharray: 4, 4;
+    stroke-width: 4;
+    stroke-linecap: round;
+}
+line.edgeLink_textCluster {
+    stroke: #858585;
+    stroke-opacity: .6;
+    stroke-dasharray: 4, 6;
+    stroke-width: 4;
+    stroke-linecap: round;
+}
+
+/*
+Legend labels
+*/
+
+li.legend {
+    font-family: 'Helvetica Neue', 'Helvetica Light', sans-serif;
+    font-weight: lighter;
+    font-size: 11px;
+    list-style-type: none;
+    /*margin-bottom: -25px;*/
+    /*padding-bottom: 5px;*/
+}
+span.legend_title {
+    color: #000000;
+}
+span.legend_creator {
+    color: #15334F;
+}
+span.legend_creatorCluster {
+    color: #15334F;
+}
+span.legend_publisher {
+    color: #DFF314;
+}
+span.legend_location {
+    color: #B4322A;
+}
+span.legend_mediatype {
+    color: #1660A7;
+}
+span.legend_subject {
+    color: #6A7404;
+}
+span.legend_source {
+    color: #bee;
+}
+span.legend_dateClean {
+    color: #78B114;
+}
+span.legend_textCluster {
+    color: #858585;
+}
+
+/*
+ SVG labels
+*/
+
+text.labels {
+    font-family: 'Helvetica Neue', 'Helvetica Light', sans-serif;
+    font-weight: lighter;
+    font-size: 11px;
+    /*visibility: hidden;*/
+    /*visible*/
+}
+text.centurylabels {
+    font-family: 'Helvetica Neue', 'Helvetica Light', sans-serif;
+    font-weight: lighter;
+    font-size: 30px;
+    /*visibility: hidden;*/
+    /*visible*/
+}
+text.barlabels {
+    font-family: 'Helvetica Neue', 'Helvetica Light', sans-serif;
+    font-weight: lighter;
+    font-size: 11px;
+    color: black;
+    /*visibility: hidden;*/
+    /*visible*/
+}
+
+/*
+Google maps
+*/
+
+#map {
+    height: 100%;
+}

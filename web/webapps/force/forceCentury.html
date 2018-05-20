@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<!-- jQuery Custom UI settings http://jqueryui.com/download/#!zThemeParams=5d00000100e505000000000000003d8888d844329a8dfe02723de3e5701258a13d5ba490adca9430ae990a4e7ff76c761eacffe8bdd4d7c4175a00ec10a7a5f2835f941b91f2e49908976ec8064b83ced519af81fbbf21811b78cdbf3375267c0633575c7caa82e80bd8a4e06f7859b6cf22c19becc8d8cd2f541d59ffc519f737da12d0f30daf5bb82f1d6298ce477cdffe5fff232c66480328805786ede22607de20a3220ca5ac63ec160a59ef2008f960b697185cea1e1e921f6dc4ccfc4eaf922084b46b327d482bff2377dbd42d606072a1c6256faa7d531d839021e3c3cdf8e38192f29220a325a1d0ac9fd43d69d4a3839bc9c69d34caefa103dc5aeed73f58473ca302a1d880269353002d2a0df94fdfbd2943c535bfd9349fa844ad51f92684e8ec98dfa218c774f53a02210ad707ce8379eeba44cdb39908ae9048cb40d56ab6cb0ec051cd4075c7194af52be58409f7a3e6441fb6c1c21ed264af069668bdec8454d13ee32ca95ed1742b71503569e724a4a48b052e2e7ef97b74da7d86ae3c7677a70d4fd72b8bbb9b1c7b28796d69f43752e22f9ca3e3dc242c203f1186c75ad68c53767f84af5cdbe16a955da4efa8ea8846e9ecbb1694c54fb8b0733f1f27dc20882ab57eefa56b14cf02985e44757df5a7c9fea940e3 -->
+
+<head>
+    <title>SBBrowse beta</title>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.4.11/d3.min.js"></script>
+    <script src="http://code.jquery.com/jquery-latest.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=XXX"></script>
+
+
+    <link href="./jquery-ui-1.11.4.custom/jquery-ui.css" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="../css/sbbbrowse.css" />
+
+    <script src="./jquery-ui-1.11.4.custom/jquery-ui.js"></script>
+
+    <script src="../common/SBBrowse_config.js"></script>
+</head>
+
+<body>
+    <h1>Characteristic Media per Century &beta;
+    <button type="button" onfocus='blur();' onclick="backToOverview();"> &#8592; Back to overview</button>
+        <button type="button" onfocus='blur();' onclick="displaySettingsDialog();"> &#9881;</button>
+        <button type="button" onfocus='blur();' onclick="$('#dialogHelp').dialog('open');">?</button>
+        
+        <br />
+        <p id="legend">documents share...</p>
+        <!-- buggy: <p>&#8693; &nbsp;zoom</p>-->
+        <!--<div id="slider" style="position:fixed; width:5px; height:200px;"></div>-->
+        </h1>
+
+    <!--<div id="slider" style="position:fixed; width:5px; height:200px; margin-top:55px;"></div>-->
+    <div id="chart" style="overflow:visible"></div>
+
+    <div id="dialog" title="Details">
+        <div id="myDialogText"></div>
+        <ul id="linkList"></ul>
+    </div>
+
+    <div id="dialogSettings" title="Display Settings">
+        <p>Click a button to toggle visibility of relationship edges</p>
+        <div id="dlgSettingsText"></div>
+    </div>
+
+    <div id="dialogMap" title="Map">
+        <div id="dlgMapText"></div>
+        <div id="map"></div>
+    </div>
+
+    <div id="dialogHelp" title="Help">
+        <p>Double-clicking a document lets you inspect a cluster. Clicking a document once makes it the current document.</p>
+        <table>
+            <tr>
+                <td>&#8592;</td>
+                <td>Back to overview</td>
+            </tr>
+            <tr>
+                <td>ESC</td>
+                <td>Remove comparison edges</td>
+            </tr>
+            <tr>
+                <td>b</td>
+                <td>Build metadata package</td>
+            </tr>
+            <tr>
+                <td>c</td>
+                <td>Compare current document to others</td>
+            </tr>
+            <tr>
+                <td>d</td>
+                <td>Display details of current document</td>
+            </tr>
+            <tr>
+                <td>m</td>
+                <td>Display map of displayed documents</td>
+            </tr>
+            <tr>
+                <td>p</td>
+                <td>Pause animation</td>
+            </tr>
+            <tr>
+                <td>s</td>
+                <td>Start animation</td>
+            </tr>
+        </table>
+    </div>
+
+    <script type="text/javascript" src="forceCentury.js"></script>
+
+</body>
+
+<script>
+    $(function() {
+        $("#dialog").dialog({
+            resizable: false,
+            autoOpen: false,
+            height: 490,
+            modal: true,
+            dialogClass: 'transparent-dialog',
+            buttons: {
+                "Ok": function() {
+                    $(this).dialog("close");
+                }
+            }
+        });
+    });
+
+    $(function() {
+        $("#dialogSettings").dialog({
+            resizable: false,
+            autoOpen: false,
+            height: 200,
+            modal: false,
+            dialogClass: 'transparent-dialog',
+            buttons: {
+                "Ok": function() {
+                    $(this).dialog("close");
+                }
+            }
+        });
+    });
+
+    $(function() {
+        $("#dialogMap").dialog({
+            resizable: false,
+            autoOpen: false,
+            width: 800,
+            height: 600,
+            modal: false,
+            dialogClass: 'transparent-dialog',
+            buttons: {
+                "Ok": function() {
+                    $(this).dialog("close");
+                }
+            }
+        });
+    });
+
+    $(function() {
+        $("#dialogHelp").dialog({
+            resizable: false,
+            autoOpen: false,
+            height: 230,
+            modal: false,
+            dialogClass: 'transparent-dialog',
+            buttons: {
+                "Ok": function() {
+                    $(this).dialog("close");
+                }
+            }
+        });
+    });
+
+    $(function() {
+        $("#slider").slider({
+            orientation: "vertical", //"horizontal",
+            range: "min",
+            min: 10,
+            max: 500,
+            value: 100,
+            slide: function(event, ui) {
+                zoomWithSlider(ui.value / 100);
+            }
+        });
+    });
+
+    // Link to open the dialog
+    /*$("#dialog-link").click(function(event) {
+        $("#dialog").dialog("open");
+        event.preventDefault();
+    });*/
+
+</script>
+
+</html>
