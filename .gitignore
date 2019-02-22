@@ -22,3 +22,5 @@ web/qa/data/*
 nbproject/
 */download/
 
+# Jupyter Notebook
+.ipynb_checkpoints
