@@ -25,3 +25,5 @@ nbproject/
 # Jupyter Notebook
 .ipynb_checkpoints
 save_120k_dc_all.pickle.zip
+120k_sbb_sample.xlsx
+120k_sbb_sample.hdf5
