@@ -1,5 +1,5 @@
 # SBBrowse2018
-SBBBrowse public, revision 2018
+SBBBrowse public, revision June 2021
 
 ![Teaser image](img/teaser.png)
 
