@@ -10,3 +10,16 @@ Digital library (DL) support for different information seeking strategies (ISS) 
 As its second contribution, the paper presents a curated data set for digital humanities researchers that is automatically enriched with metadata derived by different algorithms including content-based image features. The automatic enrichment of originally bibliographic metadata is needed to support the exploration of large metadata stock as traditional metadata does not always address vague INs.
 
 The presented proof of concept clearly shows that use case-specific metadata facilitates the interaction with large metadata corpora.
+
+## Installation 
+
+The only known issues during the installation occur under MacOS' ARM plattform are related to the build of the needed Python packages, e.g. _tables_.
+The issues are described [here](https://github.com/PyTables/PyTables/issues/219) and [here](https://github.com/freqtrade/freqtrade/issues/4162#issuecomment-890377818) and basically boil down to running these commands before the pip-based installation using the provided _requirements.txt_: 
+```
+pip install cython
+brew install hdf5
+brew install c-blosc
+export HDF5_DIR=/opt/homebrew/opt/hdf5 
+export BLOSC_DIR=/opt/homebrew/opt/c-blosc
+```
+
