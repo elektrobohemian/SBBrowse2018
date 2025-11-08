@@ -1,5 +1,5 @@
 # SBBrowse2018
-SBBBrowse public, revision June 2021
+SBBBrowse public, revision November 2025
 
 ![Teaser image](img/teaser.png)
 
@@ -13,7 +13,7 @@ The presented proof of concept clearly shows that use case-specific metadata fac
 
 ## Installation 
 
-The only known issues during the installation occur under MacOS' ARM plattform are related to the build of the needed Python packages, e.g. _tables_.
+The only known issues during the installation occur under macOS' ARM plattform are related to the build of the needed Python packages, e.g. _tables_.
 The issues are described [here](https://github.com/PyTables/PyTables/issues/219) and [here](https://github.com/freqtrade/freqtrade/issues/4162#issuecomment-890377818) and basically boil down to running these commands before the pip-based installation using the provided _requirements.txt_: 
 ```
 pip install cython
@@ -22,4 +22,13 @@ brew install c-blosc
 export HDF5_DIR=/opt/homebrew/opt/hdf5 
 export BLOSC_DIR=/opt/homebrew/opt/c-blosc
 ```
+You might also have to add ``LZO_DIR`` and install LZO as seen aboved.
 
+### Recommendation (November 2025, macOS with Mx-CPU)
+
+To minimize your personal quest for finding _tables_-related errors, an installation of the latest _PyTables_ package directly from GitHub resolves all errors:
+
+```
+pip3 install git+https://github.com/PyTables/PyTables
+````
+Alternative installation paths are also [available](https://stackoverflow.com/questions/76780968/pytables-install-with-python-3-11-fails-on-macos-m1).
