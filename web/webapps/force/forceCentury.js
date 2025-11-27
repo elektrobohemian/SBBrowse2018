@@ -70,15 +70,15 @@ var force;
 // the SVG "canvas"
 var vis;
 
-var linkHead = "http://ngcs.staatsbibliothek-berlin.de/?action=metsImage&format=jpg&metsFile=";
+var linkHead = "https://ngcs.staatsbibliothek-berlin.de/?action=metsImage&format=jpg&metsFile=";
 var linkTail = "&divID=PHYS_0001"; //&width=800&rotate=0";
-var sbbViewerLink = "http://digital.staatsbibliothek-berlin.de/werkansicht/?PPN=";
-var metsLink = "http://digital.staatsbibliothek-berlin.de/metsresolver/?PPN=";
-var ppnLink = "http://stabikat.de/DB=1/PPN?PPN=";
-var oaiGetRecordLink = "http://digital.staatsbibliothek-berlin.de/oai/?verb=GetRecord&metadataPrefix=mets&identifier=oai:digital.staatsbibliothek-berlin.de:";
-var oaiGetRecordLink_DC = "http://digital.staatsbibliothek-berlin.de/oai/?verb=GetRecord&metadataPrefix=oai_dc&identifier=oai:digital.staatsbibliothek-berlin.de:";
-var stabikatSearchLink = "http://stabikat.de/DB=1/SET=1/TTL=1/CMD?ACT=SRCHA&IKT=1016&SRT=YOP&TRM=";
-var stabikatPlusLink = "http://eds.b.ebscohost.com/eds/results?vid=0&hid=113&bdata=JmNsaTA9RlQxJmNsdjA9WSZsYW5nPWRlJnR5cGU9MCZzaXRlPWVkcy1saXZl&bquery="
+var sbbViewerLink = "https://digital.staatsbibliothek-berlin.de/werkansicht/?PPN=";
+var metsLink = "https://digital.staatsbibliothek-berlin.de/metsresolver/?PPN=";
+var ppnLink = "https://stabikat.de/DB=1/PPN?PPN=";
+var oaiGetRecordLink = "https://digital.staatsbibliothek-berlin.de/oai/?verb=GetRecord&metadataPrefix=mets&identifier=oai:digital.staatsbibliothek-berlin.de:";
+var oaiGetRecordLink_DC = "https://digital.staatsbibliothek-berlin.de/oai/?verb=GetRecord&metadataPrefix=oai_dc&identifier=oai:digital.staatsbibliothek-berlin.de:";
+var stabikatSearchLink = "https://stabikat.de/DB=1/SET=1/TTL=1/CMD?ACT=SRCHA&IKT=1016&SRT=YOP&TRM=";
+var stabikatPlusLink = "https://eds.b.ebscohost.com/eds/results?vid=0&hid=113&bdata=JmNsaTA9RlQxJmNsdjA9WSZsYW5nPWRlJnR5cGU9MCZzaXRlPWVkcy1saXZl&bquery="
     /* OLD comparison of two elements
     var queue = [];
     var queueData = [];
@@ -228,7 +228,7 @@ function createDownloadWindow() {
     var html = "<!DOCTYPE html><html><head><meta http-equiv='Content-Type' content='text/html; charset=utf-8'/></head><body></body></html>";
 
     sorttableScript = ""
-    var htmlHead = "<!DOCTYPE html><html><head><meta http-equiv='Content-Type' content='text/html; charset=utf-8'/><script src='http://code.jquery.com/jquery-latest.js'></script><style>table, th, td {border: 1px solid black;border-collapse: collapse;}</style></head><body>";
+    var htmlHead = "<!DOCTYPE html><html><head><meta http-equiv='Content-Type' content='text/html; charset=utf-8'/><script src='https://code.jquery.com/jquery-latest.js'></script><style>table, th, td {border: 1px solid black;border-collapse: collapse;}</style></head><body>";
     var htmlBody = "";
     var tableHead = "<table><tr><th>ID</th><th>Title</th><th>METS/MODS URL</th><th>Dublin Core URL</th><th>Alternative</th><th>Creator</th><th>Publisher</th><th>Century</th><th>Date</th><th>Mediatype</th><th>Location</th><th>Longitude</th><th>Latitude</th><th>Location (raw)</th><th>titleCluster</th><th>creatorCluster</th></tr>\n";
     var tableTail = "</tbody></table>"
@@ -337,7 +337,7 @@ function download(filename, text) {
 }
 
 function createGoogleMapsLink(lat, lng) {
-    return "http://maps.google.com/maps?q=" + lat + "," + lng;
+    return "https://maps.google.com/maps?q=" + lat + "," + lng;
 }
 
 // takes an input raw string and encodes all special characters as HTML entities
