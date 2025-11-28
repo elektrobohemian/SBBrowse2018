@@ -26,7 +26,7 @@ You might also have to add ``LZO_DIR`` and install LZO as seen aboved.
 
 ### Recommendation (November 2025, macOS with Mx-CPU)
 
-To minimize your personal quest for finding _tables_-related errors, an installation of the latest _PyTables_ package directly from GitHub resolves all errors:
+To minimize your personal quest for finding _tables_-related errors, an installation of the latest _PyTables_ package directly from GitHub (typically) resolves all errors:
 
 ```
 pip3 install git+https://github.com/PyTables/PyTables

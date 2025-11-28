@@ -33,3 +33,4 @@ scikit-learn
 tables
 urllib3
 
+jupyter

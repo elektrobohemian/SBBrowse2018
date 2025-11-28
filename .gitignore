@@ -24,6 +24,7 @@ nbproject/
 */download/
 
 venv/
+reports/
 
 # Jupyter Notebook
 .ipynb_checkpoints*
