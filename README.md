@@ -1,5 +1,7 @@
 # SBBrowse2018
-SBBBrowse public, revision November 2025 (M.Sc. Information Science)
+## Running smoothly since 2016
+
+SBBBrowse, revision November 2025 (M.Sc. Information Science)
 
 ![Teaser image](img/teaser.png)
 
