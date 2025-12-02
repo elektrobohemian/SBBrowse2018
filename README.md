@@ -13,7 +13,9 @@ The presented proof of concept clearly shows that use case-specific metadata fac
 
 ## Installation 
 
-The only known issues during the installation occur under macOS' ARM plattform are related to the build of the needed Python packages, e.g. _tables_.
+__As of November 2025 the HDF5 dependency has been removed. The following information has only been preserved for historic reasons.__
+
+The only known issues during the installation occur under macOS' ARM plattform are related to the build of the needed Python packages, i.e. _tables_ and _HDF5_.
 The issues are described [here](https://github.com/PyTables/PyTables/issues/219) and [here](https://github.com/freqtrade/freqtrade/issues/4162#issuecomment-890377818) and basically boil down to running these commands before the pip-based installation using the provided _requirements.txt_: 
 ```
 pip install cython

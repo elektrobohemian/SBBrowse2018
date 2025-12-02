@@ -26,6 +26,9 @@ nbproject/
 venv/
 reports/
 
+# JetBrains PyCharm-related stuff
+.idea/
+
 # Jupyter Notebook
 .ipynb_checkpoints*
 save_120k_dc_all.pickle.zip

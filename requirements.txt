@@ -30,7 +30,6 @@ scipy
 seaborn
 Sickle==0.7.0
 scikit-learn
-tables
 urllib3
 
 jupyter
