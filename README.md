@@ -1,7 +1,5 @@
 # SBBrowse2018
-## Running smoothly since 2016
-
-SBBBrowse, revision November 2025 (M.Sc. Information Science)
+#### Version: February 2026, but running smoothly since 2016
 
 ![Teaser image](img/teaser.png)
 
