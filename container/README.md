@@ -16,6 +16,10 @@ This will take some time as it will build everything from scratch.
 
 ## Running the Container
 
+__Attention__ _This tutorials uses various clustering algorithms that are pretty memory-intensive. Please make sure that your container has at least 4 GB of RAM available._
+
+_If you also plan to run the "Augmenting the Dataset: Text-based Clustering" section, you will need about 16 GB of RAM (or more). You will note that the container has run out of memory because the notebook will die._
+
 After the creation of the image, you are set to run the container by executing the following command:
 ```
 podman run  -p 127.0.0.1:8888:8888 -i -t localhost/sbbrowse
