@@ -37,6 +37,10 @@ RUN wget https://8bit-inferno.de/_persistent/save_120k_dc_all_2021.pickle
 WORKDIR "/sbbrowse/SBBrowse2018/picklez"
 RUN unzip osm_results.zip
 RUN rm -f osm_results.zip
+
+RUN wget https://8bit-inferno.de/_persistent/textbased_clusters.zip
+RUN unzip textbased_clusters.zip
+RUN rm -f textbased_clusters.zip
 RUN rm -rf ./__MACOSX
 
 
