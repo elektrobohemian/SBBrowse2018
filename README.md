@@ -1,5 +1,5 @@
 # SBBrowse2018
-#### Version: February 2026, but running smoothly since 2016
+#### Version: April 2026, but running smoothly since 2016
 
 ![Teaser image](img/teaser.png)
 
