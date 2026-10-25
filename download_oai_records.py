@@ -151,6 +151,7 @@ import codecs
 import subprocess
 import platform
 import zipfile
+import shutil
 
 # OAI
 from sickle import Sickle
