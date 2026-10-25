@@ -579,6 +579,7 @@ function zoomWithSlider(scale) {
 // central D3 rendering function
 function renderNetworkGraph(jsonFileName) {
     d3.select("#chart").selectAll("*").remove();
+    console.log("Getting JSON from: "+jsonFileName)
 
     vis = d3.select("#chart")
         .append("svg:svg")
