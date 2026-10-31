@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>SBBrowse beta</title>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.4.11/d3.min.js"></script>
+    <script src="//d3js.org/d3.v4.min.js"></script>
+
+    <script src="../common/SBBrowse_config.js"></script>
+
+    <link type="text/css" rel="stylesheet" href="../css/sbbbrowse.css" />
+
+    <meta charset="utf-8">
+    <style>
+        .node circle {
+            stroke: #fff;
+            stroke-width: 1.5px;
+        }
+        
+        .node text {
+            font-family: 'Helvetica Neue', 'Helvetica Light', sans-serif;
+            font-weight: lighter;
+            font-size: 11px;
+        }
+        
+        .node--internal circle {
+            stroke: #fff;
+            stroke-width: 1.5px;
+        }
+        
+        .node--internal text {
+            text-shadow: 0 1px 0 #fff, 0 -1px 0 #fff, 1px 0 0 #fff, -1px 0 0 #fff;
+        }
+        
+        .link {
+            fill: none;
+            stroke: #555;
+            stroke-opacity: 0.4;
+            stroke-width: 1.5px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+    <h1>Centroids per Century &beta; 
+        <button type="button" onfocus='blur();' onclick="backToOverview();"> &#8592; Back to overview</button>
+    </h1>
+    <br />
+    <br />
+    <svg width="960" height="2000" style="overflow:visible"></svg>
+    <div style="min-height: 250px"></div>
+
+    <script type="text/javascript" src="visualclusters.js"></script>
+</body>
+
+
+</html>
