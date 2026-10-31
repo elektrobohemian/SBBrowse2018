@@ -15,7 +15,10 @@
 import sys
 import os
 
+httpd=None
+
 def load_url(path):
+    global httpd
     print("Webserver working directory: "+os.getcwd())
     sys.stdout.flush()
     PORT = 8000
@@ -26,6 +29,10 @@ def load_url(path):
     httpd.stop()
     print("To restart server run: \n%s"%server)
 
+def stop():
+    global httpd
+    if httpd is not None:
+        httpd.stop()
 
 if sys.version_info[0] == 2:
     import SimpleHTTPServer, BaseHTTPServer
@@ -86,6 +93,7 @@ else:
  
         def stop(self):
             self.run = False
+            self.server_close()
  
         def serve(self):
             while self.run:
