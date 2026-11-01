@@ -232,6 +232,10 @@ if not os.path.exists(downloadDir):
 
 # number of metadata records to be retrieved
 maxDocs = 120000
+recordDatabaseFile = "save_120k_dc_all.pickle"
+
+# maxDocs = 250000
+# recordDatabaseFile = "save_250k_dc_all.pickle"
 
 # 100 is just for testing, for more interesting results increase this value to 1000. ATTENTION! this will also take more time for reading data.
 # maxDocs=100#
@@ -274,34 +278,36 @@ pbar = tqdm(total=maxDocs)
 # save the records locally as we don't want to have to rely on a connection to the OAI-PMH server all the time
 # iterate over all records until maxDocs is reached
 # ATTENTION! if you re-run this cell, the contents of the savedRecords array will be altered!
-for record in records:
-    # get the PPN of the digitized work as the DC identifier will reference different (analog) manifestations
-    tokens = record.header.identifier.split(":")
-    for t in tokens:
-        if t.startswith("PPN"):
-            # the array building simply fixes the issue that all DC field come as arrays
-            record.metadata["PPN"] = [t]
+try:
+    for record in records:
+        # get the PPN of the digitized work as the DC identifier will reference different (analog) manifestations
+        tokens = record.header.identifier.split(":")
+        for t in tokens:
+            if t.startswith("PPN"):
+                # the array building simply fixes the issue that all DC field come as arrays
+                record.metadata["PPN"] = [t]
 
-    # check if we reach the maximum document value
-    if savedDocs < maxDocs:
-        savedDocs = savedDocs + 1
-        # save the current record to the "savedRecords" array
-        savedRecords.append(record.metadata)
-        # classic text-based progress display
-        # if savedDocs%1000==0:
-        #    printLog("Downloaded %d of %d records."%(savedDocs,maxDocs))
-    # if so, end the processing of the for-loop
-    else:
-        break  # break ends the processing of the loop
-    pbar.update(1)
+        # check if we reach the maximum document value
+        if savedDocs < maxDocs:
+            savedDocs = savedDocs + 1
+            # save the current record to the "savedRecords" array
+            savedRecords.append(record.metadata)
+            # classic text-based progress display
+            # if savedDocs%1000==0:
+            #    printLog("Downloaded %d of %d records."%(savedDocs,maxDocs))
+        # if so, end the processing of the for-loop
+        else:
+            break  # break ends the processing of the loop
+        pbar.update(1)
+except Exception as e:
+    printLog(f"Error occurred during OAI-PMH download: {e}")
 
-pbar.close()
+finally:
+    pbar.close()
 
-printLog("Finished OAI-PMH download of " + str(len(savedRecords)) + " records.")
-pickle.dump(savedRecords, open("save_120k_dc_all.pickle", "wb"))
-
-
-printLog(f"Done.")
+    printLog("Finished OAI-PMH download of " + str(len(savedRecords)) + " records.")
+    pickle.dump(savedRecords, open(recordDatabaseFile, "wb"))
+    printLog(f"Done.")
 
 
 # * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -315,7 +321,7 @@ printLog(f"Done.")
 DOWNLOAD_TIMEOUT = 60
 
 # uncomment this line if you are continuing the execution of this notebook at a later point in time
-# savedRecords=pickle.load( open( "save_120k_dc_all.pickle", "rb" ) )
+# savedRecords=pickle.load( open( recordDatabaseFile, "rb" ) )
 
 tiffDownloadPath = "https://content.staatsbibliothek-berlin.de/dms/%PPN%/800/0/00000001.tif?original=true"
 
