@@ -34,6 +34,12 @@ Nice unicode characters:
 
 const VERBOSE = false;
 
+/** How long (ms) an enlarged image stays big after the mouse has left it. */
+const SHRINK_DELAY = 500;
+
+// holds the currently enlarged image (caused by a mouseover event)
+var enlargedImage = null;
+
 // dimensions of the SVG canvas
 var w = 1600, //3000,
   h = 1100; //3000,
@@ -84,7 +90,9 @@ var oaiGetRecordLink_DC =
 var stabikatSearchLink =
   "http://stabikat.de/DB=1/SET=1/TTL=1/CMD?ACT=SRCHA&IKT=1016&SRT=YOP&TRM=";
 var stabikatPlusLink =
-  "http://eds.b.ebscohost.com/eds/results?vid=0&hid=113&bdata=JmNsaTA9RlQxJmNsdjA9WSZsYW5nPWRlJnR5cGU9MCZzaXRlPWVkcy1saXZl&bquery=";
+  "https://stabikat.de/Search/Results?lookfor=%QUERY%&type=AllFields";
+// 2026: EBSCO discovery is no longer used by the SBB
+//var stabikatPlusLink = "http://eds.b.ebscohost.com/eds/results?vid=0&hid=113&bdata=JmNsaTA9RlQxJmNsdjA9WSZsYW5nPWRlJnR5cGU9MCZzaXRlPWVkcy1saXZl&bquery=";
 /* OLD comparison of two elements
     var queue = [];
     var queueData = [];
@@ -397,12 +405,18 @@ function createGoogleMapsLink(lat, lng) {
 
 // takes an input raw string and encodes all special characters as HTML entities
 function cleanUp(rawStr) {
-  if (rawStr == "nan") {
+  if (
+    rawStr === undefined ||
+    rawStr === null ||
+    rawStr === "" ||
+    rawStr === "nan"
+  ) {
+    // 2026: old version only handles'nan' and crashed on missing values
     return "- Unknown -";
-  } else
-    return rawStr.replace(/[\u00A0-\u9999<>\&]/gim, function (i) {
-      return "&#" + i.charCodeAt(0) + ";";
-    });
+  }
+  return String(rawStr).replace(/[\u00A0-\u9999<>\&]/gim, function (i) {
+    return "&#" + i.charCodeAt(0) + ";";
+  });
 }
 
 function displaySettingsDialog() {
@@ -417,7 +431,7 @@ function displaySettingsDialog() {
     mediatype: "Monograph",
     //"cluster": "10",
     source:
-      "Bollanus, Dominicus: De conceptione Beatae Virginis Mariae. Erfurt  Berlin 1486",
+      "Bollanus, Dominicus: De conceptione Beatae Virginis Mariae. Erfurt  Berlin 1486", // from 2026 on 'source' is not used anymore
     dateClean: "1486",
     alternative: "nan",
     subject: "Historische Drucke",
@@ -474,7 +488,6 @@ function toggleButton(el) {
 }
 
 function displayDetailDialog(d, i) {
-  //handle right click
   queue = d.name;
   queueData = d;
 
@@ -537,11 +550,19 @@ function displayDetailDialog(d, i) {
         "</p>",
     );
   }
-  $("#myDialogText").append(
+  /*$("#myDialogText").append(
     "<p><span class='legend_source'>&#9608;&nbsp;</span>Source: " +
       cleanUp(d.source) +
       "</p>",
-  );
+  );*/
+  if (d.source !== undefined) {
+    // 2026: 'source' is not used anymore, but we still want to show it if it exists
+    $("#myDialogText").append(
+      "<p><span class='legend_source'>&#9608;&nbsp;</span>Source: " +
+        cleanUp(d.source) +
+        "</p>",
+    );
+  }
   $("#myDialogText").append(
     "<p><span class='legend_mediatype'>&#9608;&nbsp;</span>Mediatype: " +
       cleanUp(d.mediatype) +
@@ -570,12 +591,14 @@ function displayDetailDialog(d, i) {
       "'>View in SBB viewer</a></li>",
   );
   //$("#linkList").append("<li><a target='_blank' href='" + linkHead + d.name + linkTail + "'>View first scanned pagein full size</a></li>");
+  // 2026: removed as the METS resolver is no longer provided by the SBB
+  /*
   $("#linkList").append(
     "<li><a target='_blank' href='" +
       metsLink +
       d.name +
       "'>METS/MODS metadata</a></li>",
-  );
+  );*/
   $("#linkList").append(
     "<li><a target='_blank' href='" +
       oaiGetRecordLink +
@@ -588,12 +611,19 @@ function displayDetailDialog(d, i) {
       d.name.replace("PPN", "") +
       "'>Show in catalog</a></li>",
   );
+  /* 2026: old EBSCO call
   $("#linkList").append(
     "<li><a target='_blank' href='" +
       stabikatPlusLink +
       encodeURIComponent(d.name.replace("PPN", "")) +
       "'>Search for title in stabikat+ discovery system</a></li>",
+  );*/
+  $("#linkList").append(
+    "<li><a target='_blank' href='" +
+      stabikatPlusLink.replace("%QUERY%", cleanUp(d.title)) +
+      "'>Search for title in stabikat+ discovery system</a></li>",
   );
+  // cleanUp(d.title)
   $("#dialog").dialog("open");
   //stop showing browser menu
   d3.event.preventDefault();
@@ -725,24 +755,70 @@ d3.selection.prototype.moveToFront = function () {
   });
 };
 
-function mouseover() {
-  force.stop();
-  d3.select(this).moveToFront();
-  d3.select(this)
-    .transition()
-    .delay(500)
-    .duration(750)
-    .attr("height", maxImageSize)
-    .attr("width", maxImageSize);
+var hoveredImage = null;
+var growTimer = null;
+var enlargedImage = null; // image that has finished growing
+
+// true if the cursor is still inside the original thumbnail of node d
+// we want to make the whole enlarged image clickable
+function insideFootprint(el, d) {
+  var p = d3.mouse(el.parentNode);
+  var size = el === enlargedImage ? maxImageSize : stdImageSize;
+  var left = d.x - stdImageSize / 2,
+    top = d.y - stdImageSize / 2;
+  return (
+    p[0] >= left && p[0] <= left + size && p[1] >= top && p[1] <= top + size
+  );
 }
 
-function mouseout() {
-  d3.select(this)
+function growImage(el) {
+  d3.select(el).moveToFront();
+  d3.select(el)
     .transition()
     .duration(750)
+    .attr("height", maxImageSize)
+    .attr("width", maxImageSize)
+    .each("end", function () {
+      enlargedImage = this;
+    });
+}
+
+function shrinkImage(el) {
+  d3.select(el)
+    .transition()
+    .duration(300)
     .attr("height", stdImageSize)
     .attr("width", stdImageSize);
-  if (!animationPaused && !inComparisonMode) force.start();
+}
+
+function leaveImage(el) {
+  clearTimeout(growTimer);
+  if (enlargedImage === el) enlargedImage = null;
+  shrinkImage(el);
+  if (hoveredImage === el) hoveredImage = null;
+}
+
+function mouseover(d) {
+  if (hoveredImage === this) return; // duplicate event after DOM re-insertion
+  if (hoveredImage) leaveImage(hoveredImage); // shrink the previously enlarged image
+  hoveredImage = this;
+
+  clearTimeout(growTimer);
+  var el = this;
+  growTimer = setTimeout(function () {
+    if (hoveredImage === el) growImage(el);
+  }, 500);
+}
+
+function mouseout(d) {
+  if (hoveredImage !== this) return;
+  if (insideFootprint(this, d)) return; // spurious mouseout, cursor is still on the thumbnail
+  leaveImage(this);
+}
+
+function mousemove(d) {
+  // cursor left the original thumbnail but is still over the enlarged picture
+  if (hoveredImage === this && !insideFootprint(this, d)) leaveImage(this);
 }
 
 function redraw() {
@@ -777,6 +853,12 @@ function zoomWithSlider(scale) {
       -h / 2 +
       ")",
   );
+}
+
+function onEnlargedImageClick(d, el) {
+  queue = d.name;
+  queueData = d;
+  displayDetailDialog(d, 0);
 }
 
 // central D3 rendering function
@@ -967,6 +1049,11 @@ function renderNetworkGraph(jsonFileName) {
         else return 0;
       })
       .on("click", function (d, i) {
+        // 2026: we register clicks on enlarged images separately
+        if (this === enlargedImage) {
+          onEnlargedImageClick(d, this);
+          return;
+        }
         var pos = d3.mouse(this);
         if (VERBOSE) console.log(pos);
         if (VERBOSE) console.log(d.name);
@@ -1000,6 +1087,7 @@ function renderNetworkGraph(jsonFileName) {
       .on("contextmenu", displayDetailDialog)
       .on("mouseover", mouseover)
       .on("mouseout", mouseout)
+      .on("mousemove", mousemove)
       .call(force.drag);
 
     //svg:title is automatically interpreted as a mouse-over balloon tip by the browser
