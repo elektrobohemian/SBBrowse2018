@@ -1,4 +1,4 @@
-/* 
+/*
  * The MIT License
  *
  * Copyright 2018 David Zellhoefer.
@@ -28,7 +28,3 @@ dataPathPrefix = "../../data/";
 
 imgDir_2026 = "../../thumbnails/";
 dataPathPrefix_2026 = "../../data_2026/";
-
-
-
-

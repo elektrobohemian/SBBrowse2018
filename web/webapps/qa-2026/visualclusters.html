@@ -3,11 +3,6 @@
 
 <head>
     <title>SBBrowse beta</title>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.4.11/d3.min.js"></script>
-    <script src="//d3js.org/d3.v4.min.js"></script>
-
-    <script src="../common/SBBrowse_config.js"></script>
-
     <link type="text/css" rel="stylesheet" href="../css/sbbbrowse.css" />
 
     <meta charset="utf-8">
@@ -44,7 +39,7 @@
 </head>
 
 <body>
-    <h1>Centroids per Century &beta; 
+    <h1>Centroids per Century &beta; (2026) 
         <button type="button" onfocus='blur();' onclick="backToOverview();"> &#8592; Back to overview</button>
     </h1>
     <br />
@@ -52,6 +47,10 @@
     <svg width="960" height="2000" style="overflow:visible"></svg>
     <div style="min-height: 250px"></div>
 
+    <!-- 2026: current best practice is to load JS scripts after the HTML body content, so that the DOM is already loaded when the scripts are executed. -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.4.11/d3.min.js"></script>
+    <script src="//d3js.org/d3.v4.min.js"></script>
+    <script src="../common/SBBrowse_config.js"></script>
     <script type="text/javascript" src="visualclusters.js"></script>
 </body>
 
