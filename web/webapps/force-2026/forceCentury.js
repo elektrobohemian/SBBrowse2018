@@ -498,7 +498,7 @@ function displayDetailDialog(d, i) {
   if (!inClusterInspection)
     $("#myDialogText").append(
       "<button type='button' onfocus='blur();' onclick=\"inClusterInspection=true;queue = null;queueData = null; renderNetworkGraph('" +
-        dataPathPrefix +
+        dataPathPrefix_2026 +
         "/clusters/" +
         d.century +
         "/" +
@@ -572,14 +572,28 @@ function displayDetailDialog(d, i) {
   );
 
   // check if we can created a Google Maps link for the location
-  /* 2026 commented
-    if (d.lat != "nan") {
-        mapURL = createGoogleMapsLink(d.lat, d.lng);
-        $("#myDialogText").append("<p><span class='legend_location'>&#9608;&nbsp;</span>Spatial: <a target='_blank' href='" + mapURL + "'>" + d.location + "</a> (" + cleanUp(d.locationRaw) + ")</p>");
-    } else {
-        $("#myDialogText").append("<p><span class='legend_location'>&#9608;&nbsp;</span>Spatial: <em>" + d.location + "</em> (" + cleanUp(d.locationRaw) + ")</p>");
-    }
-    */
+  // 2026 commented
+  if (d.lat != "nan") {
+    mapURL = createGoogleMapsLink(d.lat, d.lng);
+    $("#myDialogText").append(
+      "<p><span class='legend_location'>&#9608;&nbsp;</span>Spatial: <a target='_blank' href='" +
+        mapURL +
+        "'>" +
+        d.location +
+        "</a> (" +
+        cleanUp(d.locationRaw) +
+        ")</p>",
+    );
+  } else {
+    $("#myDialogText").append(
+      "<p><span class='legend_location'>&#9608;&nbsp;</span>Spatial: <em>" +
+        d.location +
+        "</em> (" +
+        cleanUp(d.locationRaw) +
+        ")</p>",
+    );
+  }
+  //*/
 
   //if (VERBOSE) console.log(d.century + ": " + d.cluster);
 
@@ -863,6 +877,7 @@ function onEnlargedImageClick(d, el) {
 
 // central D3 rendering function
 function renderNetworkGraph(jsonFileName) {
+  console.log("Processing JSON file: " + jsonFileName);
   d3.select("#chart").selectAll("*").remove();
 
   vis = d3
@@ -1072,7 +1087,7 @@ function renderNetworkGraph(jsonFileName) {
       .on("dblclick", function (d) {
         if (!inClusterInspection) {
           renderNetworkGraph(
-            dataPathPrefix +
+            dataPathPrefix_2016 +
               "clusters/" +
               d.century +
               "/" +
