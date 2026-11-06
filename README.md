@@ -1,5 +1,5 @@
 # SBBrowse2018
-#### Version: April 2026, but running smoothly since 2016
+#### Version: April/November 2026, but running smoothly since 2016
 
 ![Teaser image](img/teaser.png)
 
@@ -13,7 +13,11 @@ The presented proof of concept clearly shows that use case-specific metadata fac
 
 ## Installation 
 
-__As of November 2025 the HDF5 dependency has been removed. The following information has only been preserved for historic reasons.__
+From November 2026 on, the project now relies on [uv](https://github.com/astral-sh/uv) for package management. The enclosed [requirements.txt](./requirements.txt) is no longer updated.
+
+### Historic Remarks
+
+_As of November 2025 the HDF5 dependency has been removed. The following information has only been preserved for historic reasons._
 
 The only known issues during the installation occur under macOS' ARM plattform are related to the build of the needed Python packages, i.e. _tables_ and _HDF5_.
 The issues are described [here](https://github.com/PyTables/PyTables/issues/219) and [here](https://github.com/freqtrade/freqtrade/issues/4162#issuecomment-890377818) and basically boil down to running these commands before the pip-based installation using the provided _requirements.txt_: 
