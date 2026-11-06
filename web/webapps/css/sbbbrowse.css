@@ -40,8 +40,24 @@ h2 {
 p {
     font-family: 'Helvetica Neue', 'Helvetica Light', sans-serif;
     font-weight: lighter;
-    font-size: 11px;
+    font-size: 12px;
 }
+
+p.info {
+    font-family: 'Helvetica Neue', 'Helvetica Light', sans-serif;
+    font-weight: light;
+    font-size: 12pt;
+    max-width: 640px;
+}
+
+p.teaser_raligned {
+    font-family: 'Helvetica Neue', 'Helvetica Light', sans-serif;
+    font-weight: normal;
+    font-size: 12pt;
+    max-width: 640px;
+    text-align: right;
+}
+
 .infotext {
     font-family: 'Helvetica Neue', 'Helvetica Light', sans-serif;
     font-weight: lighter;
