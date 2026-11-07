@@ -15,13 +15,6 @@ loadMissingData = True
 
 # * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #
-# Download directory used for images etc.
-#
-# * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-downloadDir = "./tmp/"
-
-# * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-#
 # Directory used for reports etc.
 #
 # * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -131,6 +124,7 @@ import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 import pandas as pd
 import time
+import yaml
 
 from bs4 import BeautifulSoup
 from collections import OrderedDict  # provides the ordered dictionary
@@ -225,17 +219,43 @@ def saveFileFromURL(file_url, output_dir):
         return False
 
 
-if not os.path.exists(downloadDir):
-    os.makedirs(downloadDir)
-
 # OAI-PMH download of metadata records from the Staatsbibliothek zu Berlin
 
-# number of metadata records to be retrieved
-maxDocs = 120000
-recordDatabaseFile = "save_120k_dc_all.pickle"
+# configuration of the run, can be overwritten by a YAML config file (see below)
+config = dict()
 
-# maxDocs = 250000
-# recordDatabaseFile = "save_250k_dc_all.pickle"
+# check whether a YAML config exists and load it, otherwise use the configuration found in this file
+configFile = "download_oai_records.yaml"
+use_yaml_config = False
+if os.path.isfile(configFile):
+    with open(configFile, "r") as f:
+        config = yaml.safe_load(f)
+    use_yaml_config = True
+printLog(
+    f"Using YAML config: {use_yaml_config} {"from " if use_yaml_config else ""}{configFile}"
+)
+
+if not use_yaml_config:
+    # number of metadata records to be retrieved
+    config["maxDocs"] = 120000
+    # file name for the local pickle file to save the records, will be used if forceOAIRedownload is set to false and the file exists
+    config["recordDatabaseFile"] = "save_120k_dc_all.pickle"
+    config["oaiEndpoint"] = "https://oai.sbb.berlin/oai"
+    config["forceOAIRedownload"] = (
+        False  # should all records be downloaded again even if a local pickle file exists? (default: False)
+    )
+    # download directory used for images etc. (must end with /)
+    config["downloadDir"] = False
+    # should all records be downloaded again even if a local pickle file exists? (default: False)
+    config["forceImageDownload"] = False
+
+if not os.path.exists(config["downloadDir"]):
+    os.makedirs(config["downloadDir"])
+
+printLog(f"Configuration:")
+for key in config:
+    print(f"\t\t\t\t{key}: {config[key]}")
+print("")
 
 # 100 is just for testing, for more interesting results increase this value to 1000. ATTENTION! this will also take more time for reading data.
 # maxDocs=100#
@@ -246,69 +266,83 @@ savedRecords = []
 # download override (e.g., when using the sample dataset)
 # allowDownloads=False
 
+if not os.path.exists(config["recordDatabaseFile"]) or config["forceOAIRedownload"]:
+    printLog(
+        "Found existing record database file '%s', loading it..."
+        % config["recordDatabaseFile"]
+    )
 
-# connect to a metadata repository
-# sickle = Sickle('http://digital.staatsbibliothek-berlin.de/oai')
-# in 2026 we switched to HTTPS and a new URL althought the old one still works
-# however, the old URL is redirected to HTTPS eventually slowing down the download process, so we use the new URL directly
-sickle = Sickle("https://oai.sbb.berlin/oai", timeout=60, max_retries=3)
-# 2026: added timeout and max_retries to avoid connection issues otherwise the request will wait forever and the notebook will not continue.
-# The default timeout is 30 seconds, but the SBB OAI-PMH server sometimes takes longer to respond.
-# The max_retries parameter will retry the request if it fails due to a timeout or connection error.
+    # connect to a metadata repository
+    # sickle = Sickle('http://digital.staatsbibliothek-berlin.de/oai')
+    # in 2026 we switched to HTTPS and a new URL althought the old one still works
+    # however, the old URL is redirected to HTTPS eventually slowing down the download process, so we use the new URL directly
+    sickle = Sickle(config["oaiEndpoint"], timeout=60, max_retries=3)
+    # 2026: added timeout and max_retries to avoid connection issues otherwise the request will wait forever and the notebook will not continue.
+    # The default timeout is 30 seconds, but the SBB OAI-PMH server sometimes takes longer to respond.
+    # The max_retries parameter will retry the request if it fails due to a timeout or connection error.
 
-# for debugging purposes you might want to uncomment the following commands
-# get the sets from the data provider connected to
-# sets = sickle.ListSets()
-# print the returned sets including their identifiers
-# print("Sets provided by data provider\n* * * * * * * * * * * * * * * * * * * * * ") # \n creates a new line
-# for s in sets:
-#    print("'"+s.setName+"' accessible via: '"+s.setSpec+"'")
+    # for debugging purposes you might want to uncomment the following commands
+    # get the sets from the data provider connected to
+    # sets = sickle.ListSets()
+    # print the returned sets including their identifiers
+    # print("Sets provided by data provider\n* * * * * * * * * * * * * * * * * * * * * ") # \n creates a new line
+    # for s in sets:
+    #    print("'"+s.setName+"' accessible via: '"+s.setSpec+"'")
 
-# get the records from this repository's document set 'all' (all records) or a specific set such as 'DC_krieg.1914.1918' (documents related to World War I)
-# using Dublin Core format
-records = sickle.ListRecords(metadataPrefix="oai_dc", set="all")
+    # get the records from this repository's document set 'all' (all records) or a specific set such as 'DC_krieg.1914.1918' (documents related to World War I)
+    # using Dublin Core format
+    records = sickle.ListRecords(metadataPrefix="oai_dc", set="all")
 
-printLog("Starting OAI-PMH record download...")
-# initialize some variables for counting and saving the metadata records
-savedDocs = 0
+    printLog("Starting OAI-PMH record download...")
+    # initialize some variables for counting and saving the metadata records
+    savedDocs = 0
 
-# setup progress bar
-pbar = tqdm(total=maxDocs)
+    # setup progress bar
+    pbar = tqdm(
+        total=config["maxDocs"], desc="Downloading OAI-PMH records", unit="record"
+    )
 
-# save the records locally as we don't want to have to rely on a connection to the OAI-PMH server all the time
-# iterate over all records until maxDocs is reached
-# ATTENTION! if you re-run this cell, the contents of the savedRecords array will be altered!
-try:
-    for record in records:
-        # get the PPN of the digitized work as the DC identifier will reference different (analog) manifestations
-        tokens = record.header.identifier.split(":")
-        for t in tokens:
-            if t.startswith("PPN"):
-                # the array building simply fixes the issue that all DC field come as arrays
-                record.metadata["PPN"] = [t]
+    # save the records locally as we don't want to have to rely on a connection to the OAI-PMH server all the time
+    # iterate over all records until maxDocs is reached
+    # ATTENTION! if you re-run this cell, the contents of the savedRecords array will be altered!
+    try:
+        for record in records:
+            # get the PPN of the digitized work as the DC identifier will reference different (analog) manifestations
+            tokens = record.header.identifier.split(":")
+            for t in tokens:
+                if t.startswith("PPN"):
+                    # the array building simply fixes the issue that all DC field come as arrays
+                    record.metadata["PPN"] = [t]
 
-        # check if we reach the maximum document value
-        if savedDocs < maxDocs:
-            savedDocs = savedDocs + 1
-            # save the current record to the "savedRecords" array
-            savedRecords.append(record.metadata)
-            # classic text-based progress display
-            # if savedDocs%1000==0:
-            #    printLog("Downloaded %d of %d records."%(savedDocs,maxDocs))
-        # if so, end the processing of the for-loop
-        else:
-            break  # break ends the processing of the loop
-        pbar.update(1)
-except Exception as e:
-    printLog(f"Error occurred during OAI-PMH download: {e}")
+            # check if we reach the maximum document value
+            if savedDocs < config["maxDocs"]:
+                savedDocs = savedDocs + 1
+                # save the current record to the "savedRecords" array
+                savedRecords.append(record.metadata)
+                # classic text-based progress display
+                # if savedDocs%1000==0:
+                #    printLog("Downloaded %d of %d records."%(savedDocs,maxDocs))
+            # if so, end the processing of the for-loop
+            else:
+                break  # break ends the processing of the loop
+            pbar.update(1)
+    except Exception as e:
+        printLog(f"Error occurred during OAI-PMH download: {e}")
 
-finally:
-    pbar.close()
+    finally:
+        pbar.close()
 
-    printLog("Finished OAI-PMH download of " + str(len(savedRecords)) + " records.")
-    pickle.dump(savedRecords, open(recordDatabaseFile, "wb"))
-    printLog(f"Done.")
+        printLog("Finished OAI-PMH download of " + str(len(savedRecords)) + " records.")
+        pickle.dump(savedRecords, open(config["recordDatabaseFile"], "wb"))
 
+else:
+    printLog(f"Loading records from file: {config['recordDatabaseFile']}")
+    with open(config["recordDatabaseFile"], "rb") as file:
+        savedRecords = pickle.load(file)
+
+countSavedRecords = len(savedRecords)
+printLog(f"Total records available: {countSavedRecords:,}")
+printLog(f"Done.")
 
 # * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #
@@ -316,8 +350,9 @@ finally:
 #
 # * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+# sys.exit(0)
 
-# 2026 more efficient version
+# 2026: skip download if they take to long
 DOWNLOAD_TIMEOUT = 60
 
 # uncomment this line if you are continuing the execution of this notebook at a later point in time
@@ -325,10 +360,9 @@ DOWNLOAD_TIMEOUT = 60
 
 tiffDownloadPath = "https://content.staatsbibliothek-berlin.de/dms/%PPN%/800/0/00000001.tif?original=true"
 
-countSavedRecords = len(savedRecords)
 printLog("Started image download and processing. This will take a while...")
 
-logFile = open(downloadDir + "/downloadIssues.txt", "w")
+logFile = open(config["downloadDir"] + "/downloadIssues.csv", "a+")
 
 # surpress PIL's DecompressionBombErrors and Warnings
 Image.MAX_IMAGE_PIXELS = None
@@ -341,12 +375,12 @@ for i, record in tqdm(enumerate(savedRecords), total=countSavedRecords):
             break
 
     ppnTIFF = ppn + ".tif"
-    ppnJPEGPAth = downloadDir + ppn + ".jpg"
+    ppnJPEGPAth = config["downloadDir"] + ppn + ".jpg"
 
     # prevent downloading of already present files
-    if not os.path.isfile(ppnJPEGPAth):
+    if not os.path.isfile(ppnJPEGPAth) or config["forceImageDownload"]:
         tryDownload = True
-        tiffPath = downloadDir + ppnTIFF
+        tiffPath = config["downloadDir"] + ppnTIFF
         url = tiffDownloadPath.replace("%PPN%", ppn)
         try:
             with (
@@ -357,12 +391,14 @@ for i, record in tqdm(enumerate(savedRecords), total=countSavedRecords):
         except urllib.error.HTTPError as ex:
             # server answered, but with an error code (e.g. 404)
             logFile.write(
-                f"{str(datetime.now())} [HTTP]: Problem with accessing {url}\n\tHTTP Code: {ex.code}\n\n"
+                f"{ppn},{str(datetime.now())},[HTTP],Problem with accessing {url},HTTP Code: {ex.code}\n"
             )
             continue
         except (TimeoutError, urllib.error.URLError, ConnectionError) as ex:
             # no answer in time, connection refused/reset, DNS failure, ...
-            logFile.write(f"[TIMEOUT/NETWORK]: {url}\n\t{ex!r}\n\n")
+            logFile.write(
+                f"{ppn},{str(datetime.now())},[TIMEOUT/NETWORK],{url},{ex!r}\n"
+            )
             if os.path.isfile(tiffPath):
                 os.remove(tiffPath)  # don't keep a half-written TIFF
             continue
@@ -373,7 +409,7 @@ for i, record in tqdm(enumerate(savedRecords), total=countSavedRecords):
             img.save(ppnJPEGPAth)
         except Exception as ex:
             logFile.write(
-                f"{str(datetime.now())} [IMAGE]: Problem converting {ppnTIFF}\n\t{ex!r}\n\n"
+                f"{ppn},{str(datetime.now())},[IMAGE],Problem converting {ppnTIFF},{ex!r}\n"
             )
         finally:
             if not keepTIFFs and os.path.isfile(tiffPath):

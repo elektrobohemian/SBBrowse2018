@@ -1,0 +1,16 @@
+# number of metadata records to be retrieved
+#maxDocs: 250000
+maxDocs: 1000
+# file name for the local pickle file to save the records, will be used if forceOAIRedownload is set to false and the file exists
+recordDatabaseFile: "save_246k_dc_all_DEMO.pickle"
+oaiEndpoint: "https://oai.sbb.berlin/oai"
+
+# should all records be downloaded again even if a local pickle file exists? (default: false)
+forceOAIRedownload: false
+
+# download directory used for images etc. (must end with /)
+downloadDir: "./tmp/"
+
+# should all records be downloaded again even if a local pickle file exists? (default: false)
+# ATTENTION: this will ignore if images have been download before and are found on disk, futhermore this will take a lot of time
+forceImageDownload: false
