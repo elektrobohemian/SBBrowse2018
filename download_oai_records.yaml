@@ -14,3 +14,6 @@ downloadDir: "./tmp/"
 # should all records be downloaded again even if a local pickle file exists? (default: false)
 # ATTENTION: this will ignore if images have been download before and are found on disk, futhermore this will take a lot of time
 forceImageDownload: false
+
+# logfile (used for tracking download issues); will be place in 'downloadDir'
+logfile: "downloadIssues.csv"

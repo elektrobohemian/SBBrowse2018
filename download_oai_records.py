@@ -125,6 +125,7 @@ import matplotlib.image as mpimg
 import pandas as pd
 import time
 import yaml
+import csv
 
 from bs4 import BeautifulSoup
 from collections import OrderedDict  # provides the ordered dictionary
@@ -219,7 +220,7 @@ def saveFileFromURL(file_url, output_dir):
         return False
 
 
-# OAI-PMH download of metadata records from the Staatsbibliothek zu Berlin
+# # OAI-PMH download of metadata records from the Staatsbibliothek zu Berlin
 
 # configuration of the run, can be overwritten by a YAML config file (see below)
 config = dict()
@@ -248,6 +249,7 @@ if not use_yaml_config:
     config["downloadDir"] = False
     # should all records be downloaded again even if a local pickle file exists? (default: False)
     config["forceImageDownload"] = False
+    config["logfile"] = "downloadIssues.csv"
 
 if not os.path.exists(config["downloadDir"]):
     os.makedirs(config["downloadDir"])
@@ -362,7 +364,7 @@ tiffDownloadPath = "https://content.staatsbibliothek-berlin.de/dms/%PPN%/800/0/0
 
 printLog("Started image download and processing. This will take a while...")
 
-logFile = open(config["downloadDir"] + "/downloadIssues.csv", "a+")
+logFile = open(config["downloadDir"] + config["logfile"], "a+")
 
 # surpress PIL's DecompressionBombErrors and Warnings
 Image.MAX_IMAGE_PIXELS = None
@@ -416,3 +418,24 @@ for i, record in tqdm(enumerate(savedRecords), total=countSavedRecords):
                 os.remove(tiffPath)
 
 logFile.close()
+
+# analytics of error classes
+
+error_count = dict()
+ppn_per_error = dict()
+
+with open(config["downloadDir"] + config["logfile"], newline="") as csvfile:
+    csvrd = csv.reader(csvfile, delimiter=",")
+    for row in csvrd:
+        error_class = row[2]
+        if not error_class in error_count:
+            error_count[error_class] = 0
+            ppn_per_error[error_class] = []
+        error_count[error_class] += 1
+        ppn_per_error[error_class].append(row[0])
+
+print("Error count per class")
+for error_class in error_count:
+    print(f"{error_class}: {error_count[error_class]}")
+    if error_count[error_class] < 20:
+        print(f"\t{ppn_per_error[error_class]}")
