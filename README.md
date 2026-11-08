@@ -1,4 +1,4 @@
-# SBBrowse2018
+# SBBrowse2018 – Visualization of the Berlin State Library Digital Collections
 #### Version: April/November 2026, but running smoothly since 2016
 
 ![Teaser image](img/teaser.png)
@@ -38,3 +38,33 @@ To minimize your personal quest for finding _tables_-related errors, an installa
 pip3 install git+https://github.com/PyTables/PyTables
 ````
 Alternative installation paths are also [available](https://stackoverflow.com/questions/76780968/pytables-install-with-python-3-11-fails-on-macos-m1).
+
+## How to Get Started
+
+![](./img/sbbrowse_workflow.png)
+
+In 2016, SBBrowse was based on four distinct components:
+
+1. [DataProcessing.ipynb](./DataProcessing.ipynb) handling the metadata record download from the Berlin State Library (SBB), its transformation into tabular data and the image download of title pages of each record. Additionally, this notebook cleans the retrieved data, augments it with geo locations and creates network graphs based on the automatically augmented data.
+2. An image feature extraction in Java
+3. [ImageProcessing.ipynb](./ImageProcessing.ipynb) clustering the image features and preparing the data for further visualizations.
+4. A JavaScript-based frontend that allows the visual exploration of the data using [D3.js](https://github.com/d3/d3) and enabling information seeking transitions to other research tools such as the library catalog.
+
+### Recommended Workflow
+
+As of 2026, the Java feature extraction has been lost but as a good 'half-librarian' I might have lost a tool to create the data but not the the data itself: the so-called 'feature files'. Hence, it is still possible to follow most of the original workflow by using [ImageProcessing.ipynb](./ImageProcessing.ipynb) with the provided feature files. However, the old notebook is no longer maintained actively.
+
+In order to use a more modern approach towards image similarity computations, a new notebook, [ImageProcessing2026.ipynb](./ImageProcessing2026.ipynb), is provided. It can be used to generate all needed data for the frontend.
+
+In order to test the frontend, a web server is needed. To facilitate testing, [ImageProcessing2026.ipynb](./ImageProcessing2026.ipynb) (as well as the original version) comes with an embedded web server that can be launched on demand.
+
+To use the current workflow you will have to run the following sequence:
+
+1. [DataProcessing.ipynb](./DataProcessing.ipynb)
+2. [ImageProcessing2026.ipynb](./ImageProcessing2026.ipynb)
+
+Please see each notebook's documentation for further details. To get you started fast, each notebook supports the usage of sample data that is provided online as the image download and processing steps take a lot of time in particular.
+
+## Further Reading
+
+In case you want to check on other data offered by the SBB, you might be interested in [StabiHacks](https://github.com/elektrobohemian/StabiHacks).
