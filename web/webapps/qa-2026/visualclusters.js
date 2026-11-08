@@ -60,6 +60,9 @@
  *            than 3 characters (i.e. a cluster number), otherwise nothing.
  */
 
+// if set to true, the PHP-based image lookup will be used; otherwise the classic file lookup for images is used (as in 2016)
+let MODERN_LOOKUP = true;
+
 /** Edge length (px) of a thumbnail in its resting state. */
 var stdImageSize = 50;
 
@@ -115,6 +118,8 @@ document.body.addEventListener("keydown", function (e) {
  */
 function renderNetworkGraph(dataPath) {
   csvDataPath = dataPath;
+  console.log("Processing CSV file: " + csvDataPath);
+  console.log("Using SQLite backend: " + MODERN_LOOKUP);
   // Start from a blank canvas on every (re-)render.
   d3.select("svg").selectAll("*").remove();
 
@@ -285,11 +290,41 @@ function renderNetworkGraph(dataPath) {
       .attr("xlink:href", function (d) {
         imgName = d.id.substring(d.id.lastIndexOf(".") + 1); // global (no var)
         if (!d.children) {
-          if (imgName != "more") return imgDir_2026 + imgName + ".jpg";
-          else return null;
+          //if (imgName != "more") return imgDir_2026 + imgName + ".jpg";
+          if (imgName != "more") {
+            if (MODERN_LOOKUP) {
+              if (window.location.hostname === "localhost")
+                return (
+                  window.location.protocol +
+                  "//" +
+                  window.location.hostname +
+                  ":8080/jpegdb.php?file=" +
+                  imgName +
+                  ".jpg"
+                );
+              else
+                return (
+                  window.location.protocol + "//" + window.location.hostname + "/jpegdb.php?file=" + imgName + ".jpg"
+                );
+            } else return imgDir_2026 + imgName + ".jpg";
+          } else return null;
         } else {
           if (imgName.startsWith("PPN")) {
-            return imgDir_2026 + imgName + ".jpg";
+            if (MODERN_LOOKUP) {
+              if (window.location.hostname === "localhost")
+                return (
+                  window.location.protocol +
+                  "//" +
+                  window.location.hostname +
+                  ":8080/jpegdb.php?file=" +
+                  imgName +
+                  ".jpg"
+                );
+              else
+                return (
+                  window.location.protocol + "//" + window.location.hostname + "/jpegdb.php?file=" + imgName + ".jpg"
+                );
+            } else return imgDir_2026 + imgName + ".jpg";
           } else return null;
         }
       })

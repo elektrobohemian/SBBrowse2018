@@ -32,7 +32,11 @@ Nice unicode characters:
 */
 /* global dataPathPrefix */
 
+// controls output level
 const VERBOSE = false;
+
+// if set to true, the PHP-based image lookup will be used; otherwise the classic file lookup for images is used (as in 2016)
+let MODERN_LOOKUP = true;
 
 /** How long (ms) an enlarged image stays big after the mouse has left it. */
 const SHRINK_DELAY = 500;
@@ -76,21 +80,17 @@ var force;
 // the SVG "canvas"
 var vis;
 
-var linkHead =
-  "http://ngcs.staatsbibliothek-berlin.de/?action=metsImage&format=jpg&metsFile=";
+var linkHead = "http://ngcs.staatsbibliothek-berlin.de/?action=metsImage&format=jpg&metsFile=";
 var linkTail = "&divID=PHYS_0001"; //&width=800&rotate=0";
-var sbbViewerLink =
-  "http://digital.staatsbibliothek-berlin.de/werkansicht/?PPN=";
+var sbbViewerLink = "http://digital.staatsbibliothek-berlin.de/werkansicht/?PPN=";
 var metsLink = "http://digital.staatsbibliothek-berlin.de/metsresolver/?PPN=";
 var ppnLink = "http://stabikat.de/DB=1/PPN?PPN=";
 var oaiGetRecordLink =
   "http://digital.staatsbibliothek-berlin.de/oai/?verb=GetRecord&metadataPrefix=mets&identifier=oai:digital.staatsbibliothek-berlin.de:";
 var oaiGetRecordLink_DC =
   "http://digital.staatsbibliothek-berlin.de/oai/?verb=GetRecord&metadataPrefix=oai_dc&identifier=oai:digital.staatsbibliothek-berlin.de:";
-var stabikatSearchLink =
-  "http://stabikat.de/DB=1/SET=1/TTL=1/CMD?ACT=SRCHA&IKT=1016&SRT=YOP&TRM=";
-var stabikatPlusLink =
-  "https://stabikat.de/Search/Results?lookfor=%QUERY%&type=AllFields";
+var stabikatSearchLink = "http://stabikat.de/DB=1/SET=1/TTL=1/CMD?ACT=SRCHA&IKT=1016&SRT=YOP&TRM=";
+var stabikatPlusLink = "https://stabikat.de/Search/Results?lookfor=%QUERY%&type=AllFields";
 // 2026: EBSCO discovery is no longer used by the SBB
 //var stabikatPlusLink = "http://eds.b.ebscohost.com/eds/results?vid=0&hid=113&bdata=JmNsaTA9RlQxJmNsdjA9WSZsYW5nPWRlJnR5cGU9MCZzaXRlPWVkcy1saXZl&bquery=";
 /* OLD comparison of two elements
@@ -158,11 +158,7 @@ document.body.addEventListener("keydown", function (e) {
 function fadeOutSimilarityEdges() {
   //if (VERBOSE) console.log("fade out");
   d3.selectAll("image").style("opacity", 1.0);
-  d3.selectAll("#compareEdge")
-    .transition()
-    .duration(400)
-    .style("opacity", 0.0)
-    .remove();
+  d3.selectAll("#compareEdge").transition().duration(400).style("opacity", 0.0).remove();
 }
 
 function drawSimilarityEdges() {
@@ -182,17 +178,9 @@ function drawSimilarityEdges() {
       // key: the name of the object key
       // index: the ordinal position of the key within the object
       // type, weight, fixed are ignored
-      if (
-        key != "type" &&
-        key != "weight" &&
-        key != "fixed" &&
-        key != "century"
-      ) {
+      if (key != "type" && key != "weight" && key != "fixed" && key != "century") {
         if (queueData != null) {
-          if (
-            eval("queueData." + key) == eval("d." + key) &&
-            displayComparisonEdge[key] == "on"
-          ) {
+          if (eval("queueData." + key) == eval("d." + key) && displayComparisonEdge[key] == "on") {
             somethingInCommon = true;
             vis
               .append("svg:line")
@@ -245,8 +233,7 @@ function createDownloadWindow() {
     creator: "Bollanus, Dominicus",
     mediatype: "Monograph",
     cluster: "10",
-    source:
-      "Bollanus, Dominicus: De conceptione Beatae Virginis Mariae. Erfurt  Berlin 1486",
+    source: "Bollanus, Dominicus: De conceptione Beatae Virginis Mariae. Erfurt  Berlin 1486",
     dateClean: "1486",
     alternative: "nan",
     subject: "Historische Drucke",
@@ -356,17 +343,13 @@ function createDownloadWindow() {
     tableHead = tableHead + "<td>" + relatedNodes[member].locationRaw + "</td>";
 
     tableHead = tableHead + "<td>" + relatedNodes[member].textCluster + "</td>";
-    tableHead =
-      tableHead + "<td>" + relatedNodes[member].creatorCluster + "</td>";
+    tableHead = tableHead + "<td>" + relatedNodes[member].creatorCluster + "</td>";
 
     tableHead = tableHead + "</tr>\n";
   }
   $(w.document.body).append(tableHead + tableTail);
 
-  download(
-    "metadata.html",
-    htmlHead + htmlBody + tableHead + tableTail + htmlTail,
-  );
+  download("metadata.html", htmlHead + htmlBody + tableHead + tableTail + htmlTail);
 }
 
 function download(filename, text) {
@@ -405,12 +388,7 @@ function createGoogleMapsLink(lat, lng) {
 
 // takes an input raw string and encodes all special characters as HTML entities
 function cleanUp(rawStr) {
-  if (
-    rawStr === undefined ||
-    rawStr === null ||
-    rawStr === "" ||
-    rawStr === "nan"
-  ) {
+  if (rawStr === undefined || rawStr === null || rawStr === "" || rawStr === "nan") {
     // 2026: old version only handles'nan' and crashed on missing values
     return "- Unknown -";
   }
@@ -430,8 +408,7 @@ function displaySettingsDialog() {
     creator: "Bollanus, Dominicus",
     mediatype: "Monograph",
     //"cluster": "10",
-    source:
-      "Bollanus, Dominicus: De conceptione Beatae Virginis Mariae. Erfurt  Berlin 1486", // from 2026 on 'source' is not used anymore
+    source: "Bollanus, Dominicus: De conceptione Beatae Virginis Mariae. Erfurt  Berlin 1486", // from 2026 on 'source' is not used anymore
     dateClean: "1486",
     alternative: "nan",
     subject: "Historische Drucke",
@@ -492,9 +469,28 @@ function displayDetailDialog(d, i) {
   queueData = d;
 
   $("#myDialogText").empty();
-  $("#myDialogText").append(
-    "<img height='150px' src='" + imgDir + d.imagePath + ".jpg' /><br />",
-  );
+  if (MODERN_LOOKUP) {
+    if (window.location.hostname === "localhost")
+      $("#myDialogText").append(
+        "<img height='150px' src='" +
+          window.location.protocol +
+          "//" +
+          window.location.hostname +
+          ":8080/jpegdb.php?file=" +
+          d.imagePath +
+          ".jpg' /><br />",
+      );
+    else
+      $("#myDialogText").append(
+        "<img height='150px' src='" +
+          window.location.protocol +
+          "//" +
+          window.location.hostname +
+          "/jpegdb.php?file=" +
+          d.imagePath +
+          ".jpg' /><br />",
+      );
+  } else $("#myDialogText").append("<img height='150px' src='" + imgDir + d.imagePath + ".jpg' /><br />");
   if (!inClusterInspection)
     $("#myDialogText").append(
       "<button type='button' onfocus='blur();' onclick=\"inClusterInspection=true;queue = null;queueData = null; renderNetworkGraph('" +
@@ -512,9 +508,7 @@ function displayDetailDialog(d, i) {
     "&nbsp; <button type='button' onfocus='blur();' onclick=\"createDownloadWindow();\">Build package</button>",
   );
 
-  $("#myDialogText").append(
-    "<p><b>" + cleanUp(d.title) + " (" + cleanUp(d.dateClean) + ")</b></p>",
-  );
+  $("#myDialogText").append("<p><b>" + cleanUp(d.title) + " (" + cleanUp(d.dateClean) + ")</b></p>");
   cleanCreator = cleanUp(d.creator);
   if (cleanCreator != "- Unknown -")
     $("#myDialogText").append(
@@ -526,11 +520,7 @@ function displayDetailDialog(d, i) {
         "</a></p>",
     );
   else {
-    $("#myDialogText").append(
-      "<p><span class='legend_creator'>&#9608;&nbsp;</span>Creator: " +
-        cleanCreator +
-        "</p>",
-    );
+    $("#myDialogText").append("<p><span class='legend_creator'>&#9608;&nbsp;</span>Creator: " + cleanCreator + "</p>");
   }
 
   cleanPublisher = cleanUp(d.publisher);
@@ -545,9 +535,7 @@ function displayDetailDialog(d, i) {
     );
   } else {
     $("#myDialogText").append(
-      "<p><span class='legend_publisher'>&#9608;&nbsp;</span>Publisher: " +
-        cleanPublisher +
-        "</p>",
+      "<p><span class='legend_publisher'>&#9608;&nbsp;</span>Publisher: " + cleanPublisher + "</p>",
     );
   }
   /*$("#myDialogText").append(
@@ -558,9 +546,7 @@ function displayDetailDialog(d, i) {
   if (d.source !== undefined) {
     // 2026: 'source' is not used anymore, but we still want to show it if it exists
     $("#myDialogText").append(
-      "<p><span class='legend_source'>&#9608;&nbsp;</span>Source: " +
-        cleanUp(d.source) +
-        "</p>",
+      "<p><span class='legend_source'>&#9608;&nbsp;</span>Source: " + cleanUp(d.source) + "</p>",
     );
   }
   $("#myDialogText").append(
@@ -598,12 +584,7 @@ function displayDetailDialog(d, i) {
   //if (VERBOSE) console.log(d.century + ": " + d.cluster);
 
   $("#linkList").empty();
-  $("#linkList").append(
-    "<li><a target='_blank' href='" +
-      sbbViewerLink +
-      d.name +
-      "'>View in SBB viewer</a></li>",
-  );
+  $("#linkList").append("<li><a target='_blank' href='" + sbbViewerLink + d.name + "'>View in SBB viewer</a></li>");
   //$("#linkList").append("<li><a target='_blank' href='" + linkHead + d.name + linkTail + "'>View first scanned pagein full size</a></li>");
   // 2026: removed as the METS resolver is no longer provided by the SBB
   /*
@@ -614,16 +595,10 @@ function displayDetailDialog(d, i) {
       "'>METS/MODS metadata</a></li>",
   );*/
   $("#linkList").append(
-    "<li><a target='_blank' href='" +
-      oaiGetRecordLink +
-      d.name +
-      "'>OAI-PMH METS metadata GetRecord</a></li>",
+    "<li><a target='_blank' href='" + oaiGetRecordLink + d.name + "'>OAI-PMH METS metadata GetRecord</a></li>",
   );
   $("#linkList").append(
-    "<li><a target='_blank' href='" +
-      ppnLink +
-      d.name.replace("PPN", "") +
-      "'>Show in catalog</a></li>",
+    "<li><a target='_blank' href='" + ppnLink + d.name.replace("PPN", "") + "'>Show in catalog</a></li>",
   );
   /* 2026: old EBSCO call
   $("#linkList").append(
@@ -683,12 +658,7 @@ function initMap() {
           img = "<img height='150px' src='" + locations[i][3] + "' />";
 
           markerContent = "";
-          markerContent +=
-            "<p><b>" +
-            cleanUp(d.title) +
-            " (" +
-            cleanUp(d.dateClean) +
-            ")</b></p>";
+          markerContent += "<p><b>" + cleanUp(d.title) + " (" + cleanUp(d.dateClean) + ")</b></p>";
           markerContent += "<p>" + d.location + "</p>";
           cleanCreator = cleanUp(d.creator);
           if (cleanCreator != "- Unknown -")
@@ -700,10 +670,7 @@ function initMap() {
               cleanCreator +
               "</a></p>";
           else {
-            markerContent +=
-              "<p><span class='legend_creator'>&#9608;&nbsp;</span>Creator: " +
-              cleanCreator +
-              "</p>";
+            markerContent += "<p><span class='legend_creator'>&#9608;&nbsp;</span>Creator: " + cleanCreator + "</p>";
           }
           cleanPublisher = cleanUp(d.publisher);
           if (cleanPublisher != "- Unknown -") {
@@ -716,15 +683,10 @@ function initMap() {
               "</a></p>";
           } else {
             markerContent +=
-              "<p><span class='legend_publisher'>&#9608;&nbsp;</span>Publisher: " +
-              cleanPublisher +
-              "</p>";
+              "<p><span class='legend_publisher'>&#9608;&nbsp;</span>Publisher: " + cleanPublisher + "</p>";
           }
 
-          markerContent +=
-            "<p><span class='legend_source'>&#9608;&nbsp;</span>Source: " +
-            cleanUp(d.source) +
-            "</p>";
+          markerContent += "<p><span class='legend_source'>&#9608;&nbsp;</span>Source: " + cleanUp(d.source) + "</p>";
           markerContent +=
             "<p><span class='legend_mediatype'>&#9608;&nbsp;</span>Mediatype: " +
             cleanUp(d.mediatype) +
@@ -733,17 +695,10 @@ function initMap() {
             ")</p>";
 
           markerContent += "<ul>";
-          markerContent +=
-            "<li><a target='_blank' href='" +
-            metsLink +
-            d.name +
-            "'>METS/MODS metadata</a></li>";
+          markerContent += "<li><a target='_blank' href='" + metsLink + d.name + "'>METS/MODS metadata</a></li>";
 
           markerContent +=
-            "<li><a target='_blank' href='" +
-            ppnLink +
-            d.name.replace("PPN", "") +
-            "'>Show in catalog</a></li>";
+            "<li><a target='_blank' href='" + ppnLink + d.name.replace("PPN", "") + "'>Show in catalog</a></li>";
           markerContent +=
             "<li><a target='_blank' href='" +
             stabikatPlusLink +
@@ -780,9 +735,7 @@ function insideFootprint(el, d) {
   var size = el === enlargedImage ? maxImageSize : stdImageSize;
   var left = d.x - stdImageSize / 2,
     top = d.y - stdImageSize / 2;
-  return (
-    p[0] >= left && p[0] <= left + size && p[1] >= top && p[1] <= top + size
-  );
+  return p[0] >= left && p[0] <= left + size && p[1] >= top && p[1] <= top + size;
 }
 
 function growImage(el) {
@@ -798,11 +751,7 @@ function growImage(el) {
 }
 
 function shrinkImage(el) {
-  d3.select(el)
-    .transition()
-    .duration(300)
-    .attr("height", stdImageSize)
-    .attr("width", stdImageSize);
+  d3.select(el).transition().duration(300).attr("height", stdImageSize).attr("width", stdImageSize);
 }
 
 function leaveImage(el) {
@@ -837,10 +786,7 @@ function mousemove(d) {
 
 function redraw() {
   if (VERBOSE) console.log("zooming...");
-  vis.attr(
-    "transform",
-    "translate(" + d3.event.translate + ")" + " scale(" + d3.event.scale + ")",
-  );
+  vis.attr("transform", "translate(" + d3.event.translate + ")" + " scale(" + d3.event.scale + ")");
 }
 
 function zoomWithSlider(scale) {
@@ -853,19 +799,7 @@ function zoomWithSlider(scale) {
   // which is a common mistake
   container.attr(
     "transform",
-    "translate(" +
-      w / 2 +
-      ", " +
-      h / 2 +
-      ") " +
-      "scale(" +
-      scale +
-      ") " +
-      "translate(" +
-      -w / 2 +
-      ", " +
-      -h / 2 +
-      ")",
+    "translate(" + w / 2 + ", " + h / 2 + ") " + "scale(" + scale + ") " + "translate(" + -w / 2 + ", " + -h / 2 + ")",
   );
 }
 
@@ -878,6 +812,7 @@ function onEnlargedImageClick(d, el) {
 // central D3 rendering function
 function renderNetworkGraph(jsonFileName) {
   console.log("Processing JSON file: " + jsonFileName);
+  console.log("Using SQLite backend: " + MODERN_LOOKUP);
   d3.select("#chart").selectAll("*").remove();
 
   vis = d3
@@ -929,11 +864,7 @@ function renderNetworkGraph(jsonFileName) {
         ) {
           if (VERBOSE) console.log("creating legend");
           $("#legend").append(
-            "<li class='legend'><span class='legend_" +
-              key +
-              "'>&#9608;&nbsp;</span>" +
-              key +
-              "</li>",
+            "<li class='legend'><span class='legend_" + key + "'>&#9608;&nbsp;</span>" + key + "</li>",
           );
         }
         $("#legend").append("</ul>");
@@ -941,14 +872,7 @@ function renderNetworkGraph(jsonFileName) {
     });
     legendCreated = true;
 
-    force = d3.layout
-      .force()
-      .charge(-120)
-      .linkDistance(100)
-      .nodes(json.nodes)
-      .links(json.links)
-      .size([w, h])
-      .start();
+    force = d3.layout.force().charge(-120).linkDistance(100).nodes(json.nodes).links(json.links).size([w, h]).start();
 
     // http://bl.ocks.org/mbostock/3750558 "This example demonstrates how to prevent D3’s force layout from moving nodes that have been repositioned by the user."
     var drag = force.drag().on("dragstart", dragstart);
@@ -1025,8 +949,7 @@ function renderNetworkGraph(jsonFileName) {
       .append("text")
       //.attr("class", "labels")
       .attr("class", function (d) {
-        if (d.type == "century" || d.type == "dateClean")
-          return "centurylabels";
+        if (d.type == "century" || d.type == "dateClean") return "centurylabels";
         else return "labels";
       })
       .text(function (d) {
@@ -1045,8 +968,28 @@ function renderNetworkGraph(jsonFileName) {
       .append("image")
       .attr("xlink:href", function (d) {
         if (d.type != "century" && d.type != "dateClean") {
-          if (d.imagePath != "undefined") return imgDir + d.imagePath + ".jpg";
-          else return "./blank.png";
+          if (d.imagePath != "undefined") {
+            if (MODERN_LOOKUP) {
+              if (window.location.hostname === "localhost")
+                return (
+                  window.location.protocol +
+                  "//" +
+                  window.location.hostname +
+                  ":8080/jpegdb.php?file=" +
+                  d.imagePath +
+                  ".jpg"
+                );
+              else
+                return (
+                  window.location.protocol +
+                  "//" +
+                  window.location.hostname +
+                  "/jpegdb.php?file=" +
+                  d.imagePath +
+                  ".jpg"
+                );
+            } else return imgDir + d.imagePath + ".jpg";
+          } else return "./blank.png";
         }
       })
       .attr("x", function (d) {
@@ -1086,14 +1029,7 @@ function renderNetworkGraph(jsonFileName) {
       })
       .on("dblclick", function (d) {
         if (!inClusterInspection) {
-          renderNetworkGraph(
-            dataPathPrefix_2016 +
-              "clusters/" +
-              d.century +
-              "/" +
-              d.cluster +
-              ".json",
-          );
+          renderNetworkGraph(dataPathPrefix_2026 + "clusters/" + d.century + "/" + d.cluster + ".json");
           queue = null;
           queueData = null;
           inClusterInspection = true;
