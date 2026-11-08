@@ -11,6 +11,10 @@ As its second contribution, the paper presents a curated data set for digital hu
 
 The presented proof of concept clearly shows that use case-specific metadata facilitates the interaction with large metadata corpora.
 
+## Live Demo
+
+To see the tool in action, follow this [link](https://8bit-inferno.de/force). The linked page also contains a short overview video.
+
 ## Installation 
 
 From November 2026 on, the project now relies on [uv](https://github.com/astral-sh/uv) for package management. The enclosed [requirements.txt](./requirements.txt) is no longer updated.
