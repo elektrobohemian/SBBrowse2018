@@ -51,7 +51,7 @@ In 2016, SBBrowse was based on four distinct components:
 
 1. [DataProcessing.ipynb](./DataProcessing.ipynb) handling the metadata record download from the Berlin State Library (SBB), its transformation into tabular data and the image download of title pages of each record. Additionally, this notebook cleans the retrieved data, augments it with geo locations and creates network graphs based on the automatically augmented data.
 2. An image feature extraction in Java
-3. [ImageProcessing.ipynb](./ImageProcessing.ipynb) clustering the image features and preparing the data for further visualizations.
+3. [ImageProcessing.ipynb](./ImageProcessing.ipynb) clustering the image features and preparing the data for further visualizations. The notebook also creates additional network graphs.
 4. A JavaScript-based frontend that allows the visual exploration of the data using [D3.js](https://github.com/d3/d3) and enabling information seeking transitions to other research tools such as the library catalog.
 
 ### Recommended Workflow
