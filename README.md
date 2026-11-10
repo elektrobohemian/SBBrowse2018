@@ -69,6 +69,12 @@ To use the current workflow you will have to run the following sequence:
 
 Please see each notebook's documentation for further details. To get you started fast, each notebook supports the usage of sample data that is provided online as the image download and processing steps take a lot of time in particular.
 
+## New Analyses
+
+After keeping the tool alive for 10 years, a new functionality has been added. [HistoricDataComparison.ipynb](./HistoricDataComparison.ipynb) is still __work in progress__ at an early stage in autumn 2026 and aims at investigating how the digitized collections of the SBB have been changed over the years. It works with datasets from 2019, 2021, 2022 and 2026. For instance, [HistoricDataComparison.ipynb](./HistoricDataComparison.ipynb) visualizes the lifetime of PPNs as shown below.
+
+![](./img/sankey.png)
+
 ## Further Reading
 
 In case you want to check on other data offered by the SBB, you might be interested in [StabiHacks](https://github.com/elektrobohemian/StabiHacks).
