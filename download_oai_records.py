@@ -162,7 +162,13 @@ from geopy.distance import geodesic
 import geojson as gj
 
 # progress bar
-from tqdm import tqdm
+# try to load cybertqdm if it is available
+try:
+    from cybertqdm import cybertqdm as tqdm
+
+    print("Using cybertqdm to display progress on external e-ink display.")
+except ImportError:
+    from tqdm import tqdm
 
 
 # utility functions
@@ -269,10 +275,12 @@ savedRecords = []
 # allowDownloads=False
 
 if not os.path.exists(config["recordDatabaseFile"]) or config["forceOAIRedownload"]:
-    printLog(
-        "Found existing record database file '%s', loading it..."
-        % config["recordDatabaseFile"]
-    )
+    if os.path.exists(config["recordDatabaseFile"]):
+        printLog(
+            f"Found existing record database file '{config["recordDatabaseFile"]}'"
+        )
+    if config["forceOAIRedownload"]:
+        printLog("Ignoring record database as forced download is active.")
 
     # connect to a metadata repository
     # sickle = Sickle('http://digital.staatsbibliothek-berlin.de/oai')
@@ -434,7 +442,7 @@ with open(config["downloadDir"] + config["logfile"], newline="") as csvfile:
         error_count[error_class] += 1
         ppn_per_error[error_class].append(row[0])
 
-print("Error count per class")
+print("\nError count per class")
 for error_class in error_count:
     print(f"{error_class}: {error_count[error_class]}")
     if error_count[error_class] < 20:

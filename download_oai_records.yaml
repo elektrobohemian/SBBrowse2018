@@ -1,6 +1,6 @@
 # number of metadata records to be retrieved
 #maxDocs: 250000
-maxDocs: 1000
+maxDocs: 100
 # file name for the local pickle file to save the records, will be used if forceOAIRedownload is set to false and the file exists
 recordDatabaseFile: "save_246k_dc_all_DEMO.pickle"
 oaiEndpoint: "https://oai.sbb.berlin/oai"
