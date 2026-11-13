@@ -562,6 +562,20 @@ nvtx = [
 ]
 
 [[package]]
+name = "cybertqdm"
+version = "0.2.8"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "mpremote" },
+    { name = "pyserial" },
+    { name = "tqdm" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/ba/c6/63f8cfbb276db8a021d5381ad0f8efe8418864499f8299a05f8c05da2794/cybertqdm-0.2.8.tar.gz", hash = "sha256:4ebddc31f04894bcca4ab2664a82ddc834b76b84cd7cb65b8087f5d814d9dcda", size = 11393, upload-time = "2026-11-11T13:21:59.446Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/32/c8/5a3614cd4c29ac1910ddff65347409ea75e6aefbeba06f6ef3ebabe6c0e2/cybertqdm-0.2.8-py3-none-any.whl", hash = "sha256:4e98a2a34d5b149604c1a38b217fb05dbc3a42f332e9d303edfd6f2d1a71d178", size = 13270, upload-time = "2026-11-11T13:21:58.424Z" },
+]
+
+[[package]]
 name = "cycler"
 version = "0.12.1"
 source = { registry = "https://pypi.org/simple" }
@@ -1637,6 +1651,19 @@ wheels = [
 ]
 
 [[package]]
+name = "mpremote"
+version = "1.29.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "platformdirs" },
+    { name = "pyserial" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/ac/b7/8c44eb606b0e53517fd6ddda3f598b3bdb180c181f4e0bcbb9b7743f4cb5/mpremote-1.29.0.tar.gz", hash = "sha256:ab0b6f21059698e573ca076fe9a0299e5fe7bbc3ca3f5b2f00007e22e51c7b80", size = 33808, upload-time = "2026-08-24T13:54:53.108Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/51/85/f68fbcfe4d1ce32a7f2154a48f68195d4f256e3700b69ad0d5b758ee3b37/mpremote-1.29.0-py3-none-any.whl", hash = "sha256:dedac688bcd65b9d4d5b7a66119332f2830000088321107994959333f53e41c8", size = 38653, upload-time = "2026-08-24T13:54:51.674Z" },
+]
+
+[[package]]
 name = "narwhals"
 version = "2.27.1"
 source = { registry = "https://pypi.org/simple" }
@@ -2319,6 +2346,15 @@ wheels = [
 ]
 
 [[package]]
+name = "pyserial"
+version = "3.5"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/1e/7d/ae3f0a63f41e4d2f6cb66a5b57197850f919f59e558159a4dd3a818f5082/pyserial-3.5.tar.gz", hash = "sha256:3c77e014170dfffbd816e6ffc205e9842efb10be9f58ec16d3e8675b4925cddb", size = 159125, upload-time = "2020-11-23T03:59:15.045Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/07/bc/587a445451b253b285629263eb51c2d8e9bcea4fc97826266d186f96f558/pyserial-3.5-py2.py3-none-any.whl", hash = "sha256:c4451db6ba391ca6ca299fb3ec7bae67a5c55dde170964c7a14ceefec02f2cf0", size = 90585, upload-time = "2020-11-23T03:59:13.41Z" },
+]
+
+[[package]]
 name = "pyshp"
 version = "3.1.7"
 source = { registry = "https://pypi.org/simple" }
@@ -2759,6 +2795,7 @@ dependencies = [
     { name = "beautifulsoup4" },
     { name = "bs4" },
     { name = "cartopy" },
+    { name = "cybertqdm" },
     { name = "geojson" },
     { name = "geopy" },
     { name = "googlemaps" },
@@ -2802,6 +2839,7 @@ requires-dist = [
     { name = "beautifulsoup4", specifier = ">=4.15.0" },
     { name = "bs4", specifier = ">=0.0.2" },
     { name = "cartopy", specifier = ">=0.26.0" },
+    { name = "cybertqdm", specifier = ">=0.2.8" },
     { name = "geojson", specifier = ">=3.3.0" },
     { name = "geopy", specifier = ">=2.5.0" },
     { name = "googlemaps", specifier = ">=4.10.0" },

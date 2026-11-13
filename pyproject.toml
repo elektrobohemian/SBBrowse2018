@@ -6,6 +6,7 @@ dependencies = [
     "beautifulsoup4>=4.15.0",
     "bs4>=0.0.2",
     "cartopy>=0.26.0",
+    "cybertqdm>=0.2.8",
     "geojson>=3.3.0",
     "geopy>=2.5.0",
     "googlemaps>=4.10.0",
